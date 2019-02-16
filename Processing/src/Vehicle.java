@@ -1,7 +1,7 @@
 import processing.core.PApplet;
 import processing.core.PVector;
 
-class Vehicle  {
+class Vehicle {
     private PApplet p;
     private float radius;
     private PVector mouse, location, velocity, acceleration;
@@ -12,24 +12,25 @@ class Vehicle  {
         p = parent;
         radius = _radius;
         mouse = new PVector(p.mouseX, p.mouseY);
-        location = new PVector(0, 0);;
-        velocity = new PVector(0,-2);
+        location = new PVector(0, 0);
+        velocity = new PVector(0, -2);
         acceleration = new PVector(0, 0);
     }
 
-    void update() {
-        mouse.x = p.mouseX; mouse.y = p.mouseY;
+    private void update() {
+        mouse.x = p.mouseX;
+        mouse.y = p.mouseY;
         velocity.add(acceleration);
         velocity.limit(maxSpeed);
         location.add(velocity);
         acceleration.mult(0);
     }
 
-    void applyForce(PVector force) {
+    private void applyForce(PVector force) {
         acceleration.add(force);
     }
 
-    void seek(PVector target) {
+    private void seek(PVector target) {
         PVector desired = PVector.sub(target, location);
         desired.normalize();
         desired.mult(maxSpeed);
@@ -41,7 +42,17 @@ class Vehicle  {
     void draw() {
         update();
         seek(mouse);
+        float theta = velocity.heading() + p.PI / 2;
         p.fill(200, 200, 200);
-        p.ellipse(location.x, location.y, radius, radius);
+
+        p.pushMatrix();
+        p.translate(location.x,location.y);
+        p.rotate(theta);
+        p.beginShape();
+        p.vertex(0, -radius*2);
+        p.vertex(-radius, radius*2);
+        p.vertex(radius, radius*2);
+        p.endShape(p.CLOSE);
+        p.popMatrix();
     }
 }
